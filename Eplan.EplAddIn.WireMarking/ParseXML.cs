@@ -348,10 +348,12 @@ namespace WireMarking
                 }
             }
         }
+
         public override int GetHashCode()
         {
             return Label.GetHashCode();
         }
+
         public bool Equals(EplanLabellingDocumentPageLine other)
         {
             if (other == null) return false;

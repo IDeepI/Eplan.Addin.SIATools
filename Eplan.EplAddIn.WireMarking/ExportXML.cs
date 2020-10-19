@@ -3,6 +3,7 @@ using Eplan.EplApi.Base;
 using System;
 using System.Diagnostics;
 using Action = Eplan.EplApi.ApplicationFramework.Action;
+using WireMarking;
 
 namespace WireMarking
 {
@@ -10,11 +11,9 @@ namespace WireMarking
     class ExportXML
     {
 
-
-
         public static void Execute(string xmlExportFileName)
         {
-            string config_scheme = "Маркировка проводов для Partex без обратного адреса";         
+            string config_scheme = "Маркировка проводов для Partex без обратного адреса XML";         
 
             String strAction = "label";
             ActionManager oAMnr = new ActionManager();
@@ -30,38 +29,16 @@ namespace WireMarking
                // ctx.AddParameter("TASKREPEAT", "1");               
 
                 bool bRet = oAction.Execute(ctx);
-                if (bRet)
+                if (bRet == false)
                 {
-                    new Decider().Decide(EnumDecisionType.eOkDecision, "The Action " + strAction + " ended successfully!", "", EnumDecisionReturn.eOK, EnumDecisionReturn.eOK);
-                }
-                else
-                {
-                    new Decider().Decide(EnumDecisionType.eOkDecision, "The Action " + strAction + " ended with errors!", "", EnumDecisionReturn.eOK, EnumDecisionReturn.eOK);
-                }
+                    DoWireMarking.MassageHandler(strAction);
+                }               
             }
 
             Debug.WriteLine(@"-----------------");
             Debug.WriteLine(@"-------NEW-------");
             Debug.WriteLine(@"-----------------");
-            Debug.WriteLine(@"$(TMP)\" + xmlExportFileName);
-
-            /* m_pClient.SynchronousMode = true;
-             CallingContext oCallingContext = new CallingContext();
-
-             oCallingContext.Set("PROJECTNAME", sProjectFileName);
-             oCallingContext.Set("CONFIGSCHEME", config_scheme);
-             oCallingContext.Set("LANGUAGE", "??_??");
-             oCallingContext.Set("DESTINATIONFILE", @"$(TMP)\" + xmlExportFileName);
-             oCallingContext.Set("RECREPEAT", "1");
-             oCallingContext.Set("TASKREPEAT", "1");
-
-             m_pClient.ExecuteAction($"label", ref oCallingContext);
-
-             
-             Debug.WriteLine(oCallingContext.Message);*/
-
-            //Console.ReadKey();
-
+            Debug.WriteLine(@"$(TMP)\" + xmlExportFileName);          
 
         }
     }
