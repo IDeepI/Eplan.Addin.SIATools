@@ -1,6 +1,7 @@
 ﻿using Microsoft.Office.Interop.Excel;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using WireMarking;
@@ -23,6 +24,7 @@ namespace Eplan.Addin.WireMarking
         private static int rowNumberVO40 = 1;
         private static int rowNumberVO48 = 1;
         private static int rowNumberEmpty = 1;
+        private static int rowNumber = 1;
 
         public static void Execute(List<EplanLabellingDocumentPageLine> listOfLines, string xlsFileName)
         {
@@ -47,8 +49,7 @@ namespace Eplan.Addin.WireMarking
                 int columnNumber = 1;
 
                 string boxName;
-                string tmpMarkType = "";
-                int rowNumber = 1;
+                string tmpMarkType = "Not defined";               
 
                 for (int i = 0; i < listOfLines.Count; i++)
                 {
@@ -90,6 +91,16 @@ namespace Eplan.Addin.WireMarking
             xlWorkSheet.Cells[rowNumber, columnNumber] = listOfLines[i].Label?.Property[3]?.PropertyValue;
             xlWorkSheet.Cells[rowNumber, columnNumber + 1] = listOfLines[i].Label?.Property[9]?.PropertyValue.Replace("#", section).Replace("*", "");
             xlWorkSheet.Cells[rowNumber, columnNumber + 10] = listOfLines[i].Label?.Property[12]?.PropertyValue;
+
+            Debug.Write($"{listOfLines[i].Label?.Property[1]?.PropertyValue}\t : \t");
+            Debug.Write($"{section}\t : \t");
+            Debug.Write($"{columnNumber}\t : \t");
+            Debug.Write($"{rowNumber}\t : \t");
+            Debug.Write($"{listOfLines[i].Label?.Property[3]?.PropertyValue}\t : \t");
+            Debug.Write($"{listOfLines[i].Label?.Property[9]?.PropertyValue.Replace("#", section).Replace("*", "")}\t : \t");
+            Debug.Write($"{listOfLines[i].Label?.Property[12]?.PropertyValue}\t : \t");
+        
+            Debug.WriteLine("");
         }
 
         private static int ManageSheets(List<EplanLabellingDocumentPageLine> listOfLines, int sheetNumber, string boxName, int i)
@@ -110,6 +121,7 @@ namespace Eplan.Addin.WireMarking
                 rowNumberVO40 = 1;
                 rowNumberVO48 = 1;
                 rowNumberEmpty = 1;
+                rowNumber = 1;
 
                 sheetNumber += 2;
                 xlWorkBook.Worksheets.Add(After: xlWorkSheet2);
@@ -169,6 +181,7 @@ namespace Eplan.Addin.WireMarking
                         columnNumber = 5;
                         rowNumber = rowNumberVO48;
                         break;
+
                     default:
                         columnNumber = 7;
                         rowNumber = rowNumberEmpty;
