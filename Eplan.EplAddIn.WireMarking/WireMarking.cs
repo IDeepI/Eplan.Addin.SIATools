@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Windows.Forms;
-using System.Xml.Serialization;
-using Eplan.Addin.WireMarking;
+﻿using Eplan.Addin.WireMarking;
 using Eplan.EplApi.ApplicationFramework;
 using Eplan.EplApi.Base;
 using Eplan.EplApi.DataModel;
 using Eplan.EplApi.HEServices;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Xml.Serialization;
 
 namespace WireMarking
 {
@@ -90,7 +89,7 @@ namespace WireMarking
         {
             new Decider().Decide(EnumDecisionType.eOkDecision, "The Action " + actionName + " ended with errors! " + exception.Message, "", EnumDecisionReturn.eOK, EnumDecisionReturn.eOK);
         }
-       
+
 
         public void GetActionProperties(ref ActionProperties actionProperties)
         {
@@ -129,9 +128,9 @@ namespace WireMarking
                     Debug.WriteLine("");
                 }
 
-                
+
             }
-         
+
         }
 
 

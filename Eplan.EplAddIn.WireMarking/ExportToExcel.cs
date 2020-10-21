@@ -25,10 +25,17 @@ namespace Eplan.Addin.WireMarking
         private static int rowNumberVO48 = 1;
         private static int rowNumberEmpty = 1;
         private static int rowNumber = 1;
+        private static string tmpMarkType = "Not defined";
+
+        private static string[,] sheetArray1 = null;        
+        private static string[,] sheetArray2 = null;        
 
         public static void Execute(List<EplanLabellingDocumentPageLine> listOfLines, string xlsFileName)
         {
             Application xlApp = new Application();
+            sheetArray1 = new string[listOfLines.Count, 10];
+            sheetArray2 = new string[listOfLines.Count, 10];
+
             try
             {
                 if (xlApp == null)
@@ -49,7 +56,7 @@ namespace Eplan.Addin.WireMarking
                 int columnNumber = 1;
 
                 string boxName;
-                string tmpMarkType = "Not defined";               
+                
 
                 for (int i = 0; i < listOfLines.Count; i++)
                 {
@@ -59,11 +66,15 @@ namespace Eplan.Addin.WireMarking
 
                     SelectMarkType(listOfLines, ref columnNumber, ref tmpMarkType, ref rowNumber, i);
 
-                    WriteDataInCells(xlWorkSheet1, listOfLines, columnNumber, rowNumber, i, "1");
-                    WriteDataInCells(xlWorkSheet2, listOfLines, columnNumber, rowNumber, i, "2");
-
-                    rowNumber++;
+                    
+                    WriteDataInCells(sheetArray1, listOfLines, columnNumber, rowNumber, i, "1");
+                    WriteDataInCells(sheetArray2, listOfLines, columnNumber, rowNumber, i, "2");
+                    rowNumber += 2;
                 }
+
+                // Write array on sheet
+                WriteArray<string>(xlWorkSheet1, 1, 1, sheetArray1);
+                WriteArray<string>(xlWorkSheet2, 1, 1, sheetArray2);
 
                 xlWorkBook.SaveAs(xlsFileName, XlFileFormat.xlWorkbookNormal, misValue, misValue, misValue, misValue, XlSaveAsAccessMode.xlExclusive, XlSaveConflictResolution.xlLocalSessionChanges, misValue, misValue, misValue, misValue);
 
@@ -85,22 +96,47 @@ namespace Eplan.Addin.WireMarking
                 Marshal.ReleaseComObject(xlApp);
             }
         }
-
-        private static void WriteDataInCells(Worksheet xlWorkSheet, List<EplanLabellingDocumentPageLine> listOfLines, int columnNumber, int rowNumber, int i, string section)
+        private static void WriteArray<T>(this _Worksheet sheet, int startRow, int startColumn, T[,] array)
         {
-            xlWorkSheet.Cells[rowNumber, columnNumber] = listOfLines[i].Label?.Property[3]?.PropertyValue;
-            xlWorkSheet.Cells[rowNumber, columnNumber + 1] = listOfLines[i].Label?.Property[9]?.PropertyValue.Replace("#", section).Replace("*", "");
-            xlWorkSheet.Cells[rowNumber, columnNumber + 10] = listOfLines[i].Label?.Property[12]?.PropertyValue;
+            var row = array.GetLength(0);
+            var col = array.GetLength(1);
+            Range c1 = (Range)sheet.Cells[startRow, startColumn];
+            Range c2 = (Range)sheet.Cells[startRow + row - 1, startColumn + col - 1];
+            Range range = sheet.Range[c1, c2];
+            range.Value = array;
+        }
 
-            Debug.Write($"{listOfLines[i].Label?.Property[1]?.PropertyValue}\t : \t");
+        private static void WriteDataInCells(string[,] sheetArray, List<EplanLabellingDocumentPageLine> listOfLines, int columnNumber, int rowNumber, int i, string section)
+        {
+            sheetArray[rowNumber - 1, columnNumber - 1] = tmpMarkType;
+            sheetArray[rowNumber, columnNumber - 1] = tmpMarkType;
+
+            string wireName = listOfLines[i].Label?.Property[9]?.PropertyValue.Replace("#", section).Replace("*", "");
+
+            sheetArray[rowNumber - 1, columnNumber] = wireName;
+            sheetArray[rowNumber, columnNumber] = wireName;
+
+           /* sheetArray[columnNumber - 1, rowNumber - 1] = tmpMarkType;
+            sheetArray[columnNumber - 1, rowNumber] = tmpMarkType;
+
+            string wireName = listOfLines[i].Label?.Property[9]?.PropertyValue.Replace("#", section).Replace("*", "");
+
+            sheetArray[columnNumber, rowNumber - 1] = wireName;
+            sheetArray[columnNumber, rowNumber] = wireName;*/
+         
+           // xlWorkSheet.Cells[rowNumber, columnNumber] = listOfLines[i].Label?.Property[3]?.PropertyValue;
+           // xlWorkSheet.Cells[rowNumber, columnNumber + 1] = listOfLines[i].Label?.Property[9]?.PropertyValue.Replace("#", section).Replace("*", "");
+           // xlWorkSheet.Cells[rowNumber, columnNumber + 10] = listOfLines[i].Label?.Property[12]?.PropertyValue;
+
+            /*Debug.Write($"{listOfLines[i].Label?.Property[1]?.PropertyValue}\t : \t");
             Debug.Write($"{section}\t : \t");
             Debug.Write($"{columnNumber}\t : \t");
             Debug.Write($"{rowNumber}\t : \t");
             Debug.Write($"{listOfLines[i].Label?.Property[3]?.PropertyValue}\t : \t");
             Debug.Write($"{listOfLines[i].Label?.Property[9]?.PropertyValue.Replace("#", section).Replace("*", "")}\t : \t");
             Debug.Write($"{listOfLines[i].Label?.Property[12]?.PropertyValue}\t : \t");
-        
-            Debug.WriteLine("");
+
+            Debug.WriteLine("");*/
         }
 
         private static int ManageSheets(List<EplanLabellingDocumentPageLine> listOfLines, int sheetNumber, string boxName, int i)
@@ -116,6 +152,14 @@ namespace Eplan.Addin.WireMarking
             }
             else
             {
+                // Write array on sheet
+                WriteArray<string>(xlWorkSheet1, 1, 1, sheetArray1);
+                WriteArray<string>(xlWorkSheet2, 1, 1, sheetArray2);
+               
+                // Clear Array
+                sheetArray1 = new string[listOfLines.Count, 10];
+                sheetArray2 = new string[listOfLines.Count, 10];
+
                 // Start row count from the begining
                 rowNumberVO32 = 1;
                 rowNumberVO40 = 1;

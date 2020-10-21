@@ -1,9 +1,7 @@
 ﻿using Eplan.EplApi.ApplicationFramework;
-using Eplan.EplApi.Base;
 using System;
 using System.Diagnostics;
 using Action = Eplan.EplApi.ApplicationFramework.Action;
-using WireMarking;
 
 namespace WireMarking
 {
@@ -13,7 +11,7 @@ namespace WireMarking
 
         public static void Execute(string xmlExportFileName)
         {
-            string config_scheme = "Маркировка проводов для Partex без обратного адреса XML";         
+            string config_scheme = "Маркировка проводов для Partex без обратного адреса XML";
 
             String strAction = "label";
             ActionManager oAMnr = new ActionManager();
@@ -25,20 +23,20 @@ namespace WireMarking
                 ctx.AddParameter("CONFIGSCHEME", config_scheme);
                 ctx.AddParameter("LANGUAGE", "??_??");
                 ctx.AddParameter("DESTINATIONFILE", @"$(TMP)\" + xmlExportFileName);
-               // ctx.AddParameter("RECREPEAT", "1");
-               // ctx.AddParameter("TASKREPEAT", "1");               
+                // ctx.AddParameter("RECREPEAT", "1");
+                // ctx.AddParameter("TASKREPEAT", "1");               
 
                 bool bRet = oAction.Execute(ctx);
                 if (bRet == false)
                 {
                     DoWireMarking.MassageHandler(strAction);
-                }               
+                }
             }
 
             Debug.WriteLine(@"-----------------");
             Debug.WriteLine(@"-------NEW-------");
             Debug.WriteLine(@"-----------------");
-            Debug.WriteLine(@"$(TMP)\" + xmlExportFileName);          
+            Debug.WriteLine(@"$(TMP)\" + xmlExportFileName);
 
         }
     }

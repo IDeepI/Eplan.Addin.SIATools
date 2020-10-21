@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace WireMarking
 {
@@ -447,7 +445,7 @@ namespace WireMarking
                 return this.Property[v].CompareTo(comparePart.Property[v]);
             }
             else
-            {                
+            {
                 return RecursiveSort(comparePart, v + 1);
             }
         }
