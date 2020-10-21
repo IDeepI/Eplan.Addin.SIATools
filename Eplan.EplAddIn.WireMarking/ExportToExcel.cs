@@ -10,24 +10,28 @@ namespace Eplan.Addin.WireMarking
 {
     public static class ExportToExcel
     {
+        // Excel variables
         private static Application xlApp;
         private static Workbook xlWorkBook;
         private static Worksheet xlWorkSheet1;
         private static Worksheet xlWorkSheet2;
         private static object misValue = System.Reflection.Missing.Value;
 
+        // Regexp var
         private static string pattern = @"[^А-яЁё]+";
         private static string target = "";
         private static Regex regex = new Regex(pattern);
 
+        // Var common for methods
         private static int rowNumberVO32 = 1;
         private static int rowNumberVO40 = 1;
         private static int rowNumberVO48 = 1;
         private static int rowNumberEmpty = 1;
         private static int rowNumber = 1;
         private static string tmpMarkType = "Not defined";
-
-        private static string[,] sheetArray1 = null;        
+        // First section sheet
+        private static string[,] sheetArray1 = null;
+        // Second section sheet
         private static string[,] sheetArray2 = null;        
 
         public static void Execute(List<EplanLabellingDocumentPageLine> listOfLines, string xlsFileName)
@@ -54,19 +58,17 @@ namespace Eplan.Addin.WireMarking
                 xlWorkSheet2 = (Worksheet)xlWorkBook.Worksheets.get_Item(sheetNumber + 1);
                 // Collumn count
                 int columnNumber = 1;
-
-                string boxName;
-                
+                /// Name of RMU
+                string boxName;                
 
                 for (int i = 0; i < listOfLines.Count; i++)
                 {
                     boxName = listOfLines[i].Label?.Property[1]?.PropertyValue;
-
+                    // Control new sheet creation
                     sheetNumber = ManageSheets(listOfLines, sheetNumber, boxName, i);
-
+                    // Select column for each type of mark
                     SelectMarkType(listOfLines, ref columnNumber, ref tmpMarkType, ref rowNumber, i);
-
-                    
+                    // Write marking name into arrays
                     WriteDataInCells(sheetArray1, listOfLines, columnNumber, rowNumber, i, "1");
                     WriteDataInCells(sheetArray2, listOfLines, columnNumber, rowNumber, i, "2");
                     rowNumber += 2;
@@ -96,6 +98,14 @@ namespace Eplan.Addin.WireMarking
                 Marshal.ReleaseComObject(xlApp);
             }
         }
+        /// <summary>
+        /// Write array on Excel sheet
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sheet"> Object </param>
+        /// <param name="startRow"></param>
+        /// <param name="startColumn"></param>
+        /// <param name="array"></param>
         private static void WriteArray<T>(this _Worksheet sheet, int startRow, int startColumn, T[,] array)
         {
             var row = array.GetLength(0);
@@ -105,7 +115,15 @@ namespace Eplan.Addin.WireMarking
             Range range = sheet.Range[c1, c2];
             range.Value = array;
         }
-
+        /// <summary>
+        /// Write marking data into array
+        /// </summary>
+        /// <param name="sheetArray"> 2D Array </param>
+        /// <param name="listOfLines"></param>
+        /// <param name="columnNumber"></param>
+        /// <param name="rowNumber"></param>
+        /// <param name="i"></param>
+        /// <param name="section"></param>
         private static void WriteDataInCells(string[,] sheetArray, List<EplanLabellingDocumentPageLine> listOfLines, int columnNumber, int rowNumber, int i, string section)
         {
             sheetArray[rowNumber - 1, columnNumber - 1] = tmpMarkType;
@@ -115,30 +133,15 @@ namespace Eplan.Addin.WireMarking
 
             sheetArray[rowNumber - 1, columnNumber] = wireName;
             sheetArray[rowNumber, columnNumber] = wireName;
-
-           /* sheetArray[columnNumber - 1, rowNumber - 1] = tmpMarkType;
-            sheetArray[columnNumber - 1, rowNumber] = tmpMarkType;
-
-            string wireName = listOfLines[i].Label?.Property[9]?.PropertyValue.Replace("#", section).Replace("*", "");
-
-            sheetArray[columnNumber, rowNumber - 1] = wireName;
-            sheetArray[columnNumber, rowNumber] = wireName;*/
-         
-           // xlWorkSheet.Cells[rowNumber, columnNumber] = listOfLines[i].Label?.Property[3]?.PropertyValue;
-           // xlWorkSheet.Cells[rowNumber, columnNumber + 1] = listOfLines[i].Label?.Property[9]?.PropertyValue.Replace("#", section).Replace("*", "");
-           // xlWorkSheet.Cells[rowNumber, columnNumber + 10] = listOfLines[i].Label?.Property[12]?.PropertyValue;
-
-            /*Debug.Write($"{listOfLines[i].Label?.Property[1]?.PropertyValue}\t : \t");
-            Debug.Write($"{section}\t : \t");
-            Debug.Write($"{columnNumber}\t : \t");
-            Debug.Write($"{rowNumber}\t : \t");
-            Debug.Write($"{listOfLines[i].Label?.Property[3]?.PropertyValue}\t : \t");
-            Debug.Write($"{listOfLines[i].Label?.Property[9]?.PropertyValue.Replace("#", section).Replace("*", "")}\t : \t");
-            Debug.Write($"{listOfLines[i].Label?.Property[12]?.PropertyValue}\t : \t");
-
-            Debug.WriteLine("");*/
         }
-
+        /// <summary>
+        /// Control new sheet creation
+        /// </summary>
+        /// <param name="listOfLines"></param>
+        /// <param name="sheetNumber"></param>
+        /// <param name="boxName"></param> 
+        /// <param name="i"> Count of data in object list </param>
+        /// <returns></returns>
         private static int ManageSheets(List<EplanLabellingDocumentPageLine> listOfLines, int sheetNumber, string boxName, int i)
         {
             if (i == 0)
@@ -179,7 +182,14 @@ namespace Eplan.Addin.WireMarking
 
             return sheetNumber;
         }
-
+        /// <summary>
+        /// Saving row count for old mark type and selecting new type of mark
+        /// </summary>
+        /// <param name="listOfLines"></param>
+        /// <param name="columnNumber"></param>
+        /// <param name="tmpMarkType"></param>
+        /// <param name="rowNumber"></param>
+        /// <param name="i"></param>
         private static void SelectMarkType(List<EplanLabellingDocumentPageLine> listOfLines, ref int columnNumber, ref string tmpMarkType, ref int rowNumber, int i)
         {
             if (tmpMarkType != listOfLines[i].Label?.Property[3]?.PropertyValue)
@@ -233,10 +243,14 @@ namespace Eplan.Addin.WireMarking
                 }
             }
         }
-
+        /// <summary>
+        /// Creating new excel book sheet
+        /// </summary>
+        /// <param name="xlWorkSheet"></param>
+        /// <param name="boxName"></param>
+        /// <param name="curentSection"></param>
         private static void CreateBoxSheet(Worksheet xlWorkSheet, string boxName, int curentSection)
         {
-
             xlWorkSheet.Name = regex.Replace(boxName, target).Trim() + " секция " + curentSection;
         }
 

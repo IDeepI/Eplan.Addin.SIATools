@@ -434,6 +434,12 @@ namespace WireMarking
             }
         }
 
+        /// <summary>
+        /// Recursive sorting to compare 6 properies
+        /// </summary>
+        /// <param name="comparePart"></param>
+        /// <param name="v"></param>
+        /// <returns></returns>
         private int RecursiveSort(EplanLabellingDocumentPageLineLabel comparePart, int v)
         {
             if (v == 7)

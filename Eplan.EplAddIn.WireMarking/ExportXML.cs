@@ -8,23 +8,22 @@ namespace WireMarking
 
     class ExportXML
     {
-
         public static void Execute(string xmlExportFileName)
         {
+            // Scheme of marking export
             string config_scheme = "Маркировка проводов для Partex без обратного адреса XML";
-
-            String strAction = "label";
+            // Action
+            string strAction = "label";
             ActionManager oAMnr = new ActionManager();
             Action oAction = oAMnr.FindAction(strAction);
             if (oAction != null)
             {
+                // Action properties
                 ActionCallingContext ctx = new ActionCallingContext();
 
                 ctx.AddParameter("CONFIGSCHEME", config_scheme);
                 ctx.AddParameter("LANGUAGE", "??_??");
-                ctx.AddParameter("DESTINATIONFILE", @"$(TMP)\" + xmlExportFileName);
-                // ctx.AddParameter("RECREPEAT", "1");
-                // ctx.AddParameter("TASKREPEAT", "1");               
+                ctx.AddParameter("DESTINATIONFILE", @"$(TMP)\" + xmlExportFileName);              
 
                 bool bRet = oAction.Execute(ctx);
                 if (bRet == false)
@@ -32,7 +31,7 @@ namespace WireMarking
                     DoWireMarking.MassageHandler(strAction);
                 }
             }
-
+            // Debug info
             Debug.WriteLine(@"-----------------");
             Debug.WriteLine(@"-------NEW-------");
             Debug.WriteLine(@"-----------------");

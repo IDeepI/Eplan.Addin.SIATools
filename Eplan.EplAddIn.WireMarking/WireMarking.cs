@@ -99,14 +99,14 @@ namespace WireMarking
         /// </summary>
         private static void ParseXMLWireFile()
         {
-            // объект для сериализации
+            // serializable object
             EplanLabelling eplanLabelling = new EplanLabelling();
             Debug.WriteLine($"Объект создан : {System.IO.Path.GetTempPath() + xmlExportFileName}");
 
-            // передаем в конструктор тип класса
+            // send type of class into constructor
             XmlSerializer formatter = new XmlSerializer(typeof(EplanLabelling));
 
-            // десериализация
+            // deserializing
             using (FileStream fs = new FileStream(Path.GetTempPath() + xmlExportFileName, FileMode.OpenOrCreate))
             {
                 EplanLabelling newEplanLabelling = (EplanLabelling)formatter.Deserialize(fs);
@@ -114,11 +114,10 @@ namespace WireMarking
 
                 listOfLines = newEplanLabelling.Document.Page.Line.ToList();
 
-                // Call Sort on the list. This will use the
-                // default comparer, which is the Compare method
-                // implemented on Part.
+                // Call Sort on the list. This will use the default comparer
                 listOfLines.Sort();
 
+                // debug info
                 foreach (var line in listOfLines)
                 {
                     foreach (var property in line.Label.Property)
@@ -127,12 +126,7 @@ namespace WireMarking
                     }
                     Debug.WriteLine("");
                 }
-
-
             }
-
         }
-
-
     }
 }
