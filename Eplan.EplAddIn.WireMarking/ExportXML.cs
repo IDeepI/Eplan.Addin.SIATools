@@ -1,5 +1,5 @@
 ﻿using Eplan.EplApi.ApplicationFramework;
-using System;
+
 using System.Diagnostics;
 using Action = Eplan.EplApi.ApplicationFramework.Action;
 
@@ -28,7 +28,7 @@ namespace WireMarking
                 bool bRet = oAction.Execute(ctx);
                 if (bRet == false)
                 {
-                    DoWireMarking.MassageHandler(strAction);
+                    DoWireMarking.DoWireMarking.MassageHandler(strAction);
                 }
             }
             // Debug info

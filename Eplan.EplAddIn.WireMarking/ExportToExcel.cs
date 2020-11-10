@@ -4,9 +4,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using WireMarking;
 
-namespace Eplan.Addin.WireMarking
+namespace WireMarking
 {
     public static class ExportToExcel
     {
@@ -44,7 +43,7 @@ namespace Eplan.Addin.WireMarking
             {
                 if (xlApp == null)
                 {
-                    DoWireMarking.MassageHandler("Excel is not properly installed!!");
+                    DoWireMarking.DoWireMarking.MassageHandler("Excel is not properly installed!!");
                     return;
                 }
 
@@ -80,11 +79,11 @@ namespace Eplan.Addin.WireMarking
 
                 xlWorkBook.SaveAs(xlsFileName, XlFileFormat.xlWorkbookNormal, misValue, misValue, misValue, misValue, XlSaveAsAccessMode.xlExclusive, XlSaveConflictResolution.xlLocalSessionChanges, misValue, misValue, misValue, misValue);
 
-                DoWireMarking.MassageHandler($"Excel file created , you can find it in: \"{xlsFileName}\"");
+                Debug.WriteLine($"Excel file created , you can find it in: \"{xlsFileName}\"");
             }
             catch (Exception ex)
             {
-                DoWireMarking.ErrorHandler("ExportToExcel", ex);
+                DoWireMarking.DoWireMarking.ErrorHandler("ExportToExcel", ex);
                 return;
             }
             finally

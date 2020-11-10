@@ -1,8 +1,8 @@
-﻿using Eplan.Addin.WireMarking;
-using Eplan.EplApi.ApplicationFramework;
+﻿using Eplan.EplApi.ApplicationFramework;
 using Eplan.EplApi.Base;
 using Eplan.EplApi.DataModel;
 using Eplan.EplApi.HEServices;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,7 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
 
-namespace WireMarking
+namespace WireMarking.DoWireMarking
 {
     public class DoWireMarking : IEplAction
     {
@@ -39,6 +39,12 @@ namespace WireMarking
             Debug.WriteLine(ProjectName);
             string xlsFileName = Path.GetDirectoryName(CurrentProject.ProjectFullName);
             xlsFileName = Path.Combine(xlsFileName, "Marking.xls");
+            Progress progress = new Progress("SimpleProgress");
+            progress.SetAllowCancel(true);
+            progress.SetAskOnCancel(true);
+            progress.SetTitle("Wire mark export");
+            progress.ShowImmediately();
+            progress.BeginPart(25.0, "Export label : ");
             try
             {
                 // Executing Action "label"
@@ -49,6 +55,8 @@ namespace WireMarking
                 ErrorHandler("ExportXML", ex);
                 return false;
             }
+            progress.EndPart();
+            progress.BeginPart(50.0, "Parse XML : ");
             try
             {
                 // Getting object from XML
@@ -59,6 +67,8 @@ namespace WireMarking
                 ErrorHandler("ParseXMLWireFile", ex);
                 return false;
             }
+            progress.EndPart();
+            progress.BeginPart(100.0, "Write data to Excel : " + xlsFileName);
             try
             {
                 // Export to excel
@@ -70,13 +80,15 @@ namespace WireMarking
                 ErrorHandler("ExportToExcel", ex);
                 return false;
             }
+
+            progress.EndPart(true);
             return true;
         }
         /// <summary>
         /// Show message in Eplan
         /// </summary>
         /// <param name="errorMessage"></param>
-        internal static void MassageHandler(string errorMessage)
+        public static void MassageHandler(string errorMessage)
         {
             new Decider().Decide(EnumDecisionType.eOkDecision, errorMessage, "", EnumDecisionReturn.eOK, EnumDecisionReturn.eOK);
         }
@@ -85,7 +97,7 @@ namespace WireMarking
         /// </summary>
         /// <param name="actionName"></param>
         /// <param name="exception"></param>
-        internal static void ErrorHandler(string actionName, Exception exception)
+        public static void ErrorHandler(string actionName, Exception exception)
         {
             new Decider().Decide(EnumDecisionType.eOkDecision, "The Action " + actionName + " ended with errors! " + exception.Message, "", EnumDecisionReturn.eOK, EnumDecisionReturn.eOK);
         }
@@ -116,7 +128,7 @@ namespace WireMarking
 
                 // Call Sort on the list. This will use the default comparer
                 listOfLines.Sort();
-
+                /*
                 // debug info
                 foreach (var line in listOfLines)
                 {
@@ -125,7 +137,7 @@ namespace WireMarking
                         Debug.Write($"{property.PropertyValue}\t : \t");
                     }
                     Debug.WriteLine("");
-                }
+                }*/
             }
         }
     }

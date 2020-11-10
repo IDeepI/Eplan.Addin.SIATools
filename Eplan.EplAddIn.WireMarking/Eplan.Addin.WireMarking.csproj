@@ -7,7 +7,7 @@
     <ProjectGuid>{E9EA6A33-77A6-442C-867C-1FA936C925C5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Eplan.Addin.WireMarking</RootNamespace>
+    <RootNamespace>WireMarking</RootNamespace>
     <AssemblyName>Eplan.Addin.WireMarking</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
