@@ -24,8 +24,12 @@ namespace WireMarking
         public bool OnInitGui()
         {
             Menu OurMenu = new Menu();
-            OurMenu.AddMainMenu("SIA", Menu.MainMenuName.eMainMenuUtilities, "Маркировать", "WireMarking",
-                "Вывод маркировки", 1);
+            OurMenu.AddMainMenu("SIA", Menu.MainMenuName.eMainMenuUtilities, "Маркировать", "WireMarking", "Вывод маркировки", 1);
+            //OurMenu.AddMenuItem("Test", "ExportToPdfAndDwg");
+            ///OurMenu.AddMenuItem("Печать", "ExportToPdfAndDwg", "strStatusText", 1, 1, false, false);
+
+            OurMenu.AddMainMenu("Печать", Menu.MainMenuName.eMainMenuUtilities, "Печать", "ExportToPdfAndDwg", "Вывод в PDF и DWG", 1);
+
             return true;
         }
 

@@ -24,20 +24,29 @@ namespace WireMarking
         // Var common for methods
         private static int rowNumberVO32 = 1;
         private static int rowNumberVO40 = 1;
-        private static int rowNumberVO48 = 1;
+        private static int rowNumberVO45 = 1;
         private static int rowNumberEmpty = 1;
         private static int rowNumber = 1;
+
+        // Total Mark type count (30 mm each)
+        private static int VO32 = 0;
+        private static int VO40 = 0;
+        private static int VO45 = 0;
+        private static int noMark = 0;
+
+        // Collumn count
+        private static int columnNumber = 1;
         private static string tmpMarkType = "Not defined";
         // First section sheet
         private static string[,] sheetArray1 = null;
         // Second section sheet
-        private static string[,] sheetArray2 = null;        
+        private static string[,] sheetArray2 = null;
 
-        public static void Execute(List<EplanLabellingDocumentPageLine> listOfLines, string xlsFileName)
+        public static void Execute(List<EplanLabellingDocumentPageLine> listOfLines, string xlsFileName, Eplan.EplApi.Base.Progress progress)
         {
             Application xlApp = new Application();
-            sheetArray1 = new string[listOfLines.Count, 10];
-            sheetArray2 = new string[listOfLines.Count, 10];
+            sheetArray1 = new string[listOfLines.Count * 2, 10];
+            sheetArray2 = new string[listOfLines.Count * 2, 10];
 
             try
             {
@@ -55,27 +64,39 @@ namespace WireMarking
                 // Add as last
                 xlWorkBook.Worksheets.Add(After: xlWorkSheet1);
                 xlWorkSheet2 = (Worksheet)xlWorkBook.Worksheets.get_Item(sheetNumber + 1);
-                // Collumn count
-                int columnNumber = 1;
+
                 /// Name of RMU
-                string boxName;                
+                string boxName;
 
                 for (int i = 0; i < listOfLines.Count; i++)
                 {
                     boxName = listOfLines[i].Label?.Property[1]?.PropertyValue;
+
+                    progress.BeginPart(40.0 / listOfLines.Count, "Write : " + boxName);
                     // Control new sheet creation
                     sheetNumber = ManageSheets(listOfLines, sheetNumber, boxName, i);
+                    
+                    // Total Mark type count 
+                    VO32 += rowNumberVO32 - 1;
+                    VO40 += rowNumberVO40 - 1;
+                    VO45 += rowNumberVO45 - 1;
+                    noMark += rowNumberEmpty - 1;
+
                     // Select column for each type of mark
                     SelectMarkType(listOfLines, ref columnNumber, ref tmpMarkType, ref rowNumber, i);
                     // Write marking name into arrays
                     WriteDataInCells(sheetArray1, listOfLines, columnNumber, rowNumber, i, "1");
                     WriteDataInCells(sheetArray2, listOfLines, columnNumber, rowNumber, i, "2");
                     rowNumber += 2;
+
+                    progress.EndPart();
                 }
 
                 // Write array on sheet
                 WriteArray<string>(xlWorkSheet1, 1, 1, sheetArray1);
                 WriteArray<string>(xlWorkSheet2, 1, 1, sheetArray2);
+
+                DoWireMarking.DoWireMarking.MassageHandler("VO32 - " + VO32 + "\nVO40 - " + VO40 + "\nVO45 - " + VO45 + "\nnoMark - " + noMark);
 
                 xlWorkBook.SaveAs(xlsFileName, XlFileFormat.xlWorkbookNormal, misValue, misValue, misValue, misValue, XlSaveAsAccessMode.xlExclusive, XlSaveConflictResolution.xlLocalSessionChanges, misValue, misValue, misValue, misValue);
 
@@ -83,7 +104,7 @@ namespace WireMarking
             }
             catch (Exception ex)
             {
-                DoWireMarking.DoWireMarking.ErrorHandler("ExportToExcel", ex);
+                DoWireMarking.DoWireMarking.ErrorHandler("ExportToExcel" + "\nlistOfLines.Count " + listOfLines.Count + "\nrowNumber " + rowNumber + "\ncolumnNumber " + columnNumber, ex);
                 return;
             }
             finally
@@ -157,7 +178,7 @@ namespace WireMarking
                 // Write array on sheet
                 WriteArray<string>(xlWorkSheet1, 1, 1, sheetArray1);
                 WriteArray<string>(xlWorkSheet2, 1, 1, sheetArray2);
-               
+
                 // Clear Array
                 sheetArray1 = new string[listOfLines.Count, 10];
                 sheetArray2 = new string[listOfLines.Count, 10];
@@ -165,7 +186,7 @@ namespace WireMarking
                 // Start row count from the begining
                 rowNumberVO32 = 1;
                 rowNumberVO40 = 1;
-                rowNumberVO48 = 1;
+                rowNumberVO45 = 1;
                 rowNumberEmpty = 1;
                 rowNumber = 1;
 
@@ -196,18 +217,18 @@ namespace WireMarking
                 // Save row count
                 switch (tmpMarkType)
                 {
-                    case "VO-32":
+                    case "VO-032BN4":
                         rowNumberVO32 = rowNumber;
                         break;
 
-                    case "VO-40":
+                    case "VO-040BN4":
 
                         rowNumberVO40 = rowNumber;
                         break;
 
-                    case "VO-48":
+                    case "VO-045BN4":
 
-                        rowNumberVO48 = rowNumber;
+                        rowNumberVO45 = rowNumber;
                         break;
                     default:
 
@@ -220,19 +241,19 @@ namespace WireMarking
                 // Change row count
                 switch (tmpMarkType)
                 {
-                    case "VO-32":
+                    case "VO-032BN4":
                         columnNumber = 1;
                         rowNumber = rowNumberVO32;
                         break;
 
-                    case "VO-40":
+                    case "VO-040BN4":
                         columnNumber = 3;
                         rowNumber = rowNumberVO40;
                         break;
 
-                    case "VO-48":
+                    case "VO-045BN4":
                         columnNumber = 5;
-                        rowNumber = rowNumberVO48;
+                        rowNumber = rowNumberVO45;
                         break;
 
                     default:

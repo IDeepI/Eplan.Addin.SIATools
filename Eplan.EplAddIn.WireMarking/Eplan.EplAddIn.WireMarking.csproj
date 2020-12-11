@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>WireMarking</RootNamespace>
-    <AssemblyName>Eplan.Addin.WireMarking</AssemblyName>
+    <AssemblyName>Eplan.EplAddIn.WireMarking</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -59,8 +59,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExportToExcel.cs" />
+    <Compile Include="ExportToPdfAndDwg.cs" />
     <Compile Include="ExportXML.cs" />
     <Compile Include="ParseXML.cs" />
+    <Compile Include="Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="WireMarking.cs" />
     <Compile Include="Register.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -93,6 +99,13 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

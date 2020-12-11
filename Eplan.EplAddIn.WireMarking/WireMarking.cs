@@ -15,7 +15,7 @@ namespace WireMarking.DoWireMarking
     public class DoWireMarking : IEplAction
     {
         // Temp file
-        public static string xmlExportFileName = "TMP_XMLWireData.xml";
+        public static string xmlExportFileName = Settings.Default.xmlExportFileName;
         /// List of XML objects
         public static List<EplanLabellingDocumentPageLine> listOfLines;
 
@@ -38,7 +38,8 @@ namespace WireMarking.DoWireMarking
             string ProjectName = CurrentProject.ProjectName;
             Debug.WriteLine(ProjectName);
             string xlsFileName = Path.GetDirectoryName(CurrentProject.ProjectFullName);
-            xlsFileName = Path.Combine(xlsFileName, "Marking.xls");
+            xlsFileName = Path.Combine(xlsFileName, Settings.Default.outputFileName);
+            // Show ProgressBar
             Progress progress = new Progress("SimpleProgress");
             progress.SetAllowCancel(true);
             progress.SetAskOnCancel(true);
@@ -55,8 +56,9 @@ namespace WireMarking.DoWireMarking
                 ErrorHandler("ExportXML", ex);
                 return false;
             }
+            
             progress.EndPart();
-            progress.BeginPart(50.0, "Parse XML : ");
+            progress.BeginPart(25.0, "Parse XML : ");
             try
             {
                 // Getting object from XML
@@ -68,20 +70,23 @@ namespace WireMarking.DoWireMarking
                 return false;
             }
             progress.EndPart();
-            progress.BeginPart(100.0, "Write data to Excel : " + xlsFileName);
+            progress.BeginPart(10.0, "Write data to Excel : " + xlsFileName);
             try
             {
                 // Export to excel
                 // Creating *.xls file
-                ExportToExcel.Execute(listOfLines, xlsFileName);
+                ExportToExcel.Execute(listOfLines, xlsFileName, progress);
             }
             catch (Exception ex)
             {
-                ErrorHandler("ExportToExcel", ex);
+                ErrorHandler("ExportToExcel.Execute", ex);
                 return false;
             }
+            finally
+            {
+                progress.EndPart(true);
+            }
 
-            progress.EndPart(true);
             return true;
         }
         /// <summary>
