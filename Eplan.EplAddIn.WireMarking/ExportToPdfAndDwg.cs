@@ -19,7 +19,7 @@ namespace WireMarking.ExportToPdfAndDwg
             Progress progress = new Progress("SimpleProgress");
             progress.SetAllowCancel(true);
             progress.SetAskOnCancel(true);
-            progress.SetTitle("Wire mark export");
+            progress.SetTitle("DWG/PDF export");
             progress.ShowImmediately();
             progress.BeginPart(25.0, "ChangeFontType to GOST Type AU : ");
             try
@@ -37,13 +37,13 @@ namespace WireMarking.ExportToPdfAndDwg
 
             progress.EndPart();
             progress.BeginPart(25.0, "ChangeFontType to GOST type A : ");
-
+            progress.Step(1);
             try
             {
                 ChangeFontType(CurrentProject, "GOST type A");
                 progress.EndPart();
                 progress.BeginPart(25.0, "Export to PDF : ");
-                ExportToPdf();
+                ExportToPdf();                
             }
             catch (Exception ex)
             {
@@ -62,10 +62,13 @@ namespace WireMarking.ExportToPdfAndDwg
         /// </summary>
         private void ExportToPdf()
         {
+            SelectionSet Set = new SelectionSet();
+            Project CurrentProject = Set.GetCurrentProject(true);
+            string ProjectName = CurrentProject.ProjectName;
             // Scheme of marking export
             string exportType = "PDFPROJECTSCHEME";
             string exportScheme = "SIA";
-            string exportFileName = "ESS_Sample_Project";
+            string exportFileName = $"d:\\Work\\PDF\\{ProjectName}.pdf";
             // Action
             string strAction = "export";
 
@@ -82,12 +85,13 @@ namespace WireMarking.ExportToPdfAndDwg
 
                 ctx.AddParameter("TYPE", exportType);
                 ctx.AddParameter("EXPORTSCHEME", exportScheme);
-                ctx.AddParameter("EXPORTFILE", @"$(TMP)\" + exportFileName);
+                ctx.AddParameter("EXPORTFILE", exportFileName);
+               // ctx.AddParameter("USEPAGEFILTER", "1");
 
                 bool bRet = oAction.Execute(ctx);
                 if (bRet == false)
                 {
-                    DoWireMarking.DoWireMarking.MassageHandler(strAction);
+                    DoWireMarking.DoWireMarking.MassageHandler("Error in Action - ExportToPdf");
                 }
             }
             
@@ -98,9 +102,9 @@ namespace WireMarking.ExportToPdfAndDwg
         private void ExportToDwg()
         {
             // Scheme of marking export
-            string exportType = "DXFPROJECT";
+            string exportType = "DWGPROJECT";
             //string exportScheme = "SIA";
-            string exportPath = "";
+            string exportPath = @"d:\Work\DWG\";
             // Action
             string strAction = "export";
 
@@ -117,13 +121,21 @@ namespace WireMarking.ExportToPdfAndDwg
 
                 ctx.AddParameter("TYPE", exportType);
                // ctx.AddParameter("EXPORTSCHEME", exportScheme);            
-                ctx.AddParameter("DESTINATIONPATH", @"$(TMP)\" + exportPath);
+                ctx.AddParameter("DESTINATIONPATH", exportPath);
+                //ctx.AddParameter("USEPAGEFILTER", "1");
 
                 bool bRet = oAction.Execute(ctx);
                 if (bRet == false)
                 {
-                    DoWireMarking.DoWireMarking.MassageHandler(strAction);
+                    DoWireMarking.DoWireMarking.MassageHandler("Error in Action - ExportToDwg");
+                                       
+                    DoWireMarking.DoWireMarking.MassageHandler(ctx.ToString()); 
+                    DoWireMarking.DoWireMarking.MassageHandler(ctx.GetParameters().ToString()); 
+                    DoWireMarking.DoWireMarking.MassageHandler(ctx.GetStrings().ToString()); 
+                    
+
                 }
+                
             }
         }
 
@@ -141,7 +153,7 @@ namespace WireMarking.ExportToPdfAndDwg
 
             string strTest0 = oSettings.GetStringSetting("COMPANY.GedViewer.Fonts", 0);
 
-            DoWireMarking.DoWireMarking.MassageHandler(strTest0);
+            //DoWireMarking.DoWireMarking.MassageHandler(strTest0);
         }
 
         public void GetActionProperties(ref ActionProperties actionProperties)
