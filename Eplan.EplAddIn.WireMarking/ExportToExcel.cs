@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using System.Collections.Specialized;
 
 namespace WireMarking
 {
@@ -22,17 +23,25 @@ namespace WireMarking
         private static Regex regex = new Regex(pattern);
 
         // Var common for methods
-        private static int rowNumberVO32 = 1;
-        private static int rowNumberVO40 = 1;
-        private static int rowNumberVO45 = 1;
-        private static int rowNumberEmpty = 1;
+        // OrderedDictionary myOrderedDictionary = new OrderedDictionary();
+        //private static OrderedDictionary markTypeRow = new OrderedDictionary();   
+        private static List<string> markType = new List<string>() { };
+        private static Dictionary<string, int> markTypeRow = new Dictionary<string, int>();        
+        /* private static int rowNumberVO32 = 1;
+         private static int rowNumberVO40 = 1;
+         private static int rowNumberVO45 = 1;
+         private static int rowNumberVO72 = 1;
+         private static int rowNumberEmpty = 1;*/
         private static int rowNumber = 1;
 
-        // Total Mark type count (30 mm each)
-        private static int VO32 = 0;
-        private static int VO40 = 0;
-        private static int VO45 = 0;
-        private static int noMark = 0;
+        /*  // Total Mark type count (30 mm each)
+          private static int VO32 = 0;
+          private static int VO40 = 0;
+          private static int VO45 = 0;
+          private static int noMark = 0;*/
+
+        // Collumn count
+        private static int xlsSheetCounter = 1;
 
         // Collumn count
         private static int columnNumber = 1;
@@ -42,8 +51,27 @@ namespace WireMarking
         // Second section sheet
         private static string[,] sheetArray2 = null;
 
+        /// Name of RMU
+        private static string boxName;
+
         public static void Execute(List<EplanLabellingDocumentPageLine> listOfLines, string xlsFileName, Eplan.EplApi.Base.Progress progress)
         {
+            markTypeRow["VO-032BN4"] = 1;
+            markTypeRow["VO-040BN4"] = 1;
+            markTypeRow["VO-045BN4"] = 1;
+            markTypeRow["VO-072BN4"] = 1;
+            markTypeRow[""] = 1;
+            markType = new List<string>() {
+                "VO-032BN4",
+                "VO-040BN4",
+                "VO-045BN4",
+                "VO-072BN4",
+                ""
+            };
+
+
+
+
             Application xlApp = new Application();
             sheetArray1 = new string[listOfLines.Count * 2, 10];
             sheetArray2 = new string[listOfLines.Count * 2, 10];
@@ -65,8 +93,6 @@ namespace WireMarking
                 xlWorkBook.Worksheets.Add(After: xlWorkSheet1);
                 xlWorkSheet2 = (Worksheet)xlWorkBook.Worksheets.get_Item(sheetNumber + 1);
 
-                /// Name of RMU
-                string boxName;
 
                 for (int i = 0; i < listOfLines.Count; i++)
                 {
@@ -76,11 +102,11 @@ namespace WireMarking
                     // Control new sheet creation
                     sheetNumber = ManageSheets(listOfLines, sheetNumber, boxName, i);
                     
-                    // Total Mark type count 
+                 /*   // Total Mark type count 
                     VO32 += rowNumberVO32 - 1;
                     VO40 += rowNumberVO40 - 1;
                     VO45 += rowNumberVO45 - 1;
-                    noMark += rowNumberEmpty - 1;
+                    noMark += rowNumberEmpty - 1;*/
 
                     // Select column for each type of mark
                     SelectMarkType(listOfLines, ref columnNumber, ref tmpMarkType, ref rowNumber, i);
@@ -96,7 +122,7 @@ namespace WireMarking
                 WriteArray<string>(xlWorkSheet1, 1, 1, sheetArray1);
                 WriteArray<string>(xlWorkSheet2, 1, 1, sheetArray2);
 
-                DoWireMarking.DoWireMarking.MassageHandler("VO32 - " + VO32 + "\nVO40 - " + VO40 + "\nVO45 - " + VO45 + "\nnoMark - " + noMark);
+               // DoWireMarking.DoWireMarking.MassageHandler("VO32 - " + VO32 + "\nVO40 - " + VO40 + "\nVO45 - " + VO45 + "\nnoMark - " + noMark);
 
                 xlWorkBook.SaveAs(xlsFileName, XlFileFormat.xlWorkbookNormal, misValue, misValue, misValue, misValue, XlSaveAsAccessMode.xlExclusive, XlSaveConflictResolution.xlLocalSessionChanges, misValue, misValue, misValue, misValue);
 
@@ -104,7 +130,7 @@ namespace WireMarking
             }
             catch (Exception ex)
             {
-                DoWireMarking.DoWireMarking.ErrorHandler("ExportToExcel" + "\nlistOfLines.Count " + listOfLines.Count + "\nrowNumber " + rowNumber + "\ncolumnNumber " + columnNumber, ex);
+                DoWireMarking.DoWireMarking.ErrorHandler("ExportToExcel" + "\nlistOfLines.Count " + listOfLines.Count + "\nrowNumber " + rowNumber + "\ncolumnNumber " + columnNumber + "\nboxName " + boxName, ex);
                 return;
             }
             finally
@@ -182,12 +208,13 @@ namespace WireMarking
                 // Clear Array
                 sheetArray1 = new string[listOfLines.Count, 10];
                 sheetArray2 = new string[listOfLines.Count, 10];
-
+              
                 // Start row count from the begining
-                rowNumberVO32 = 1;
-                rowNumberVO40 = 1;
-                rowNumberVO45 = 1;
-                rowNumberEmpty = 1;
+                markTypeRow["VO-032BN4"] = 1;
+                markTypeRow["VO-040BN4"] = 1;
+                markTypeRow["VO-045BN4"] = 1;
+                markTypeRow["VO-072BN4"] = 1;
+                markTypeRow[""] = 1;
                 rowNumber = 1;
 
                 sheetNumber += 2;
@@ -215,52 +242,15 @@ namespace WireMarking
             if (tmpMarkType != listOfLines[i].Label?.Property[3]?.PropertyValue)
             {
                 // Save row count
-                switch (tmpMarkType)
-                {
-                    case "VO-032BN4":
-                        rowNumberVO32 = rowNumber;
-                        break;
-
-                    case "VO-040BN4":
-
-                        rowNumberVO40 = rowNumber;
-                        break;
-
-                    case "VO-045BN4":
-
-                        rowNumberVO45 = rowNumber;
-                        break;
-                    default:
-
-                        rowNumberEmpty = rowNumber;
-                        break;
-                }
-
+                markTypeRow[tmpMarkType] = rowNumber;                
 
                 tmpMarkType = listOfLines[i].Label?.Property[3]?.PropertyValue;
+
                 // Change row count
-                switch (tmpMarkType)
-                {
-                    case "VO-032BN4":
-                        columnNumber = 1;
-                        rowNumber = rowNumberVO32;
-                        break;
+                rowNumber = markTypeRow[tmpMarkType];
 
-                    case "VO-040BN4":
-                        columnNumber = 3;
-                        rowNumber = rowNumberVO40;
-                        break;
+                columnNumber = markType.IndexOf(tmpMarkType) * 2  + 1 ;
 
-                    case "VO-045BN4":
-                        columnNumber = 5;
-                        rowNumber = rowNumberVO45;
-                        break;
-
-                    default:
-                        columnNumber = 7;
-                        rowNumber = rowNumberEmpty;
-                        break;
-                }
             }
         }
         /// <summary>
@@ -271,7 +261,8 @@ namespace WireMarking
         /// <param name="curentSection"></param>
         private static void CreateBoxSheet(Worksheet xlWorkSheet, string boxName, int curentSection)
         {
-            xlWorkSheet.Name = regex.Replace(boxName, target).Trim() + " секция " + curentSection;
+            xlWorkSheet.Name = xlsSheetCounter + "." + regex.Replace(boxName, target).Trim() + " секция " + curentSection;
+            xlsSheetCounter++;
         }
 
     }

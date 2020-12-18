@@ -24,11 +24,17 @@ namespace WireMarking
         public bool OnInitGui()
         {
             Menu OurMenu = new Menu();
-            OurMenu.AddMainMenu("SIA", Menu.MainMenuName.eMainMenuUtilities, "Маркировать", "WireMarking", "Вывод маркировки", 1);
+            //publicAddMainMenu(string strMainMenuText, string strMainMenuTextReference, string strMenuName, string strActionName, string strStatusText, int nInsertPosition);
+            uint nCommandId = OurMenu.AddMainMenu("SIA", Menu.MainMenuName.eMainMenuUtilities, "Маркировать", "WireMarking", "Вывод маркировки", 1);
             //OurMenu.AddMenuItem("Test", "ExportToPdfAndDwg");
-            ///OurMenu.AddMenuItem("Печать", "ExportToPdfAndDwg", "strStatusText", 1, 1, false, false);
 
-            OurMenu.AddMainMenu("Печать", Menu.MainMenuName.eMainMenuUtilities, "Печать", "ExportToPdfAndDwg", "Вывод в PDF и DWG", 1);
+            //public uint AddMenuItem(string strText, string strActionName, string strStatusText, uint nCommandId, int nInsertPosition, bool bSeparatorBefore, bool bSeparatorBehind);
+            ///OurMenu.AddMenuItem("Печать", "ExportToPdfAndDwg", "strStatusText", 1, 1, false, false);
+           
+            //public uint AddMenuItem(string strText, string strActionName, string strStatusText, uint nCommandId, int nInsertPosition, bool bSeparatorBefore, bool bSeparatorBehind);
+             OurMenu.AddMenuItem("Печать", "ExportToPdfAndDwg", "Экспорт в PDF/DWG", nCommandId, 1, false, false);
+
+           // OurMenu.AddMainMenu("Печать", Menu.MainMenuName.eMainMenuUtilities, "Печать", "ExportToPdfAndDwg", "Вывод в PDF и DWG", 1);
 
             return true;
         }
