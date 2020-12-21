@@ -50,6 +50,12 @@ namespace WireMarking.DoWireMarking
             {
                 // Executing Action "label"
                 ExportXML.Execute(xmlExportFileName);
+
+                if (progress.Canceled())
+                {
+                    progress.EndPart(true);
+                    return true;
+                }
             }
             catch (Exception ex)
             {
@@ -66,7 +72,8 @@ namespace WireMarking.DoWireMarking
 
                 if (progress.Canceled())
                 {
-                    throw new Exception("Canceled by User.");
+                    progress.EndPart(true);
+                    return true;
                 }
 
             }
@@ -82,6 +89,12 @@ namespace WireMarking.DoWireMarking
                 // Export to excel
                 // Creating *.xls file
                 ExportToExcel.Execute(listOfLines, xlsFileName, progress);
+
+                if (progress.Canceled())
+                {
+                    progress.EndPart(true);
+                    return true;
+                }
             }
             catch (Exception ex)
             {

@@ -95,15 +95,10 @@ namespace WireMarking
 
 
                 for (int i = 0; i < listOfLines.Count; i++)
-                {
-                    if (progress.Canceled())
-                    {
-                        throw new Exception("Canceled by User.");
-                    }
-
+                {  
                     boxName = listOfLines[i].Label?.Property[1]?.PropertyValue;
 
-                    progress.BeginPart(40.0 / listOfLines.Count, "Write : " + boxName);
+                    progress.BeginPart(40.0 / listOfLines.Count, "Writing : " + boxName);
                     // Control new sheet creation
                     sheetNumber = ManageSheets(listOfLines, sheetNumber, boxName, i);
                     
@@ -120,7 +115,13 @@ namespace WireMarking
                     WriteDataInCells(sheetArray2, listOfLines, columnNumber, rowNumber, i, "2");
                     rowNumber += 2;
 
-                    progress.EndPart();                    
+                    progress.EndPart();
+
+                    if (progress.Canceled())
+                    {
+                        progress.EndPart(true);
+                        i = listOfLines.Count;
+                    }
                 }
 
                 // Write array on sheet
