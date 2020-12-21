@@ -520,7 +520,13 @@ namespace WireMarking
                 return 1;
             else
             {
-                if (this.PropertyValue.CompareTo(comparePart.PropertyValue) != 0)
+                int numberPropertyValue;
+                int numberComparePropertyValue;
+                if (int.TryParse(this.PropertyValue, out numberPropertyValue) && int.TryParse(comparePart.PropertyValue, out numberComparePropertyValue) && numberPropertyValue.CompareTo(numberComparePropertyValue) != 0)
+                {
+                    return numberPropertyValue.CompareTo(numberComparePropertyValue);
+                }                
+                else if (this.PropertyValue.CompareTo(comparePart.PropertyValue) != 0)
                 {
                     return this.PropertyValue.CompareTo(comparePart.PropertyValue);
                 }

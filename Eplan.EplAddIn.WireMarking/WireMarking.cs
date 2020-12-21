@@ -63,6 +63,12 @@ namespace WireMarking.DoWireMarking
             {
                 // Getting object from XML
                 ParseXMLWireFile();
+
+                if (progress.Canceled())
+                {
+                    throw new Exception("Canceled by User.");
+                }
+
             }
             catch (Exception ex)
             {

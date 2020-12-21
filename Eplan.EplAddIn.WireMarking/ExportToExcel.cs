@@ -96,6 +96,11 @@ namespace WireMarking
 
                 for (int i = 0; i < listOfLines.Count; i++)
                 {
+                    if (progress.Canceled())
+                    {
+                        throw new Exception("Canceled by User.");
+                    }
+
                     boxName = listOfLines[i].Label?.Property[1]?.PropertyValue;
 
                     progress.BeginPart(40.0 / listOfLines.Count, "Write : " + boxName);
@@ -115,7 +120,7 @@ namespace WireMarking
                     WriteDataInCells(sheetArray2, listOfLines, columnNumber, rowNumber, i, "2");
                     rowNumber += 2;
 
-                    progress.EndPart();
+                    progress.EndPart();                    
                 }
 
                 // Write array on sheet
@@ -239,12 +244,12 @@ namespace WireMarking
         /// <param name="i"></param>
         private static void SelectMarkType(List<EplanLabellingDocumentPageLine> listOfLines, ref int columnNumber, ref string tmpMarkType, ref int rowNumber, int i)
         {
-            if (tmpMarkType != listOfLines[i].Label?.Property[3]?.PropertyValue)
+            if (tmpMarkType != listOfLines[i].Label?.Property[6]?.PropertyValue)
             {
                 // Save row count
                 markTypeRow[tmpMarkType] = rowNumber;                
 
-                tmpMarkType = listOfLines[i].Label?.Property[3]?.PropertyValue;
+                tmpMarkType = listOfLines[i].Label?.Property[6]?.PropertyValue;
 
                 // Change row count
                 rowNumber = markTypeRow[tmpMarkType];
