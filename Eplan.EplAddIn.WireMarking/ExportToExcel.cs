@@ -23,22 +23,10 @@ namespace WireMarking
         private static Regex regex = new Regex(pattern);
 
         // Var common for methods
-        // OrderedDictionary myOrderedDictionary = new OrderedDictionary();
-        //private static OrderedDictionary markTypeRow = new OrderedDictionary();   
         private static List<string> markType = new List<string>() { };
         private static Dictionary<string, int> markTypeRow = new Dictionary<string, int>();        
-        /* private static int rowNumberVO32 = 1;
-         private static int rowNumberVO40 = 1;
-         private static int rowNumberVO45 = 1;
-         private static int rowNumberVO72 = 1;
-         private static int rowNumberEmpty = 1;*/
-        private static int rowNumber = 1;
 
-        /*  // Total Mark type count (30 mm each)
-          private static int VO32 = 0;
-          private static int VO40 = 0;
-          private static int VO45 = 0;
-          private static int noMark = 0;*/
+        private static int rowNumber = 1;
 
         // Collumn count
         private static int xlsSheetCounter = 1;
@@ -101,13 +89,7 @@ namespace WireMarking
                     progress.BeginPart(40.0 / listOfLines.Count, "Writing : " + boxName);
                     // Control new sheet creation
                     sheetNumber = ManageSheets(listOfLines, sheetNumber, boxName, i);
-                    
-                 /*   // Total Mark type count 
-                    VO32 += rowNumberVO32 - 1;
-                    VO40 += rowNumberVO40 - 1;
-                    VO45 += rowNumberVO45 - 1;
-                    noMark += rowNumberEmpty - 1;*/
-
+          
                     // Select column for each type of mark
                     SelectMarkType(listOfLines, ref columnNumber, ref tmpMarkType, ref rowNumber, i);
                     // Write marking name into arrays

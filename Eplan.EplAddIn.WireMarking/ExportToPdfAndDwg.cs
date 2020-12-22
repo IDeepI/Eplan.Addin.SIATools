@@ -24,6 +24,7 @@ namespace WireMarking.ExportToPdfAndDwg
             progress.BeginPart(25.0, "ChangeFontType to GOST Type AU : ");
             try
             {
+                ChangeDrawMode(2);
                 ChangeFontType(CurrentProject, "GOST Type AU");
                 progress.EndPart();
                 progress.BeginPart(25.0, "Export to DWG : ");
@@ -31,9 +32,11 @@ namespace WireMarking.ExportToPdfAndDwg
             }
             catch (Exception ex)
             {
+                progress.EndPart(true);
                 DoWireMarking.DoWireMarking.ErrorHandler("Export to DWG", ex);
                 return false;
             }
+
 
             progress.EndPart();
             progress.BeginPart(25.0, "ChangeFontType to GOST type A : ");
@@ -43,10 +46,11 @@ namespace WireMarking.ExportToPdfAndDwg
                 ChangeFontType(CurrentProject, "GOST type A");
                 progress.EndPart();
                 progress.BeginPart(25.0, "Export to PDF : ");
-                ExportToPdf();                
+                ExportToPdf();
+                ChangeDrawMode(3);
             }
             catch (Exception ex)
-            {
+            {                
                 DoWireMarking.DoWireMarking.ErrorHandler("Export to PDF", ex);
                 return false;
             }
@@ -54,9 +58,26 @@ namespace WireMarking.ExportToPdfAndDwg
             {
                 progress.EndPart(true);
             }
-
+            
             return true;
         }
+        /// <summary>
+        /// How to draw point of connection
+        /// </summary>
+        /// <param name="drawMode"> 3 - default. 2 - for printing</param>
+        private void ChangeDrawMode(int drawMode)
+        {
+            Eplan.EplApi.DataModel.ProjectManager oProjectManager = new Eplan.EplApi.DataModel.ProjectManager();
+            Project oProject = oProjectManager.CurrentProject;
+            Eplan.EplApi.DataModel.ProjectSettings projectSettings = new Eplan.EplApi.DataModel.ProjectSettings(oProject);
+
+            string befor = projectSettings.GetExpandedStringSetting("TrDMProject.Wiring", 0);
+
+            projectSettings.SetNumericSetting("TrDMProject.Wiring", drawMode, 0);            
+                     
+            //DoWireMarking.DoWireMarking.MassageHandler($"Befor { befor }\nAfter { drawMode }");
+        }
+
         /// <summary>
         /// Export to pdf with filter "Для печати" and scheme "SIA"
         /// </summary>
@@ -72,9 +93,7 @@ namespace WireMarking.ExportToPdfAndDwg
             // Action
             string strAction = "export";
 
-            // Export a project in pdf format
-
-            // export / TYPE:PDFPROJECTSCHEME / PROJECTNAME:C:\Projects\EPLAN\ESS_Sample_Project.elk / EXPORTFILE:C:\ESS_Sample_Project.pdf / EXPORTSCHEME:myScheme
+            // Export a project in pdf format            
 
             ActionManager oAMnr = new ActionManager();
             Eplan.EplApi.ApplicationFramework.Action oAction = oAMnr.FindAction(strAction);
@@ -151,9 +170,7 @@ namespace WireMarking.ExportToPdfAndDwg
             oSettings.SetStringSetting("COMPANY.GedViewer.Fonts", $"??_??@{font};", 0);
             oSettings.SetStringSetting("COMPANY.GedViewer.Fonts", $"??_??@{font};", 1);
 
-            string strTest0 = oSettings.GetStringSetting("COMPANY.GedViewer.Fonts", 0);
-
-            //DoWireMarking.DoWireMarking.MassageHandler(strTest0);
+            string strTest0 = oSettings.GetStringSetting("COMPANY.GedViewer.Fonts", 0);            
         }
 
         public void GetActionProperties(ref ActionProperties actionProperties)
