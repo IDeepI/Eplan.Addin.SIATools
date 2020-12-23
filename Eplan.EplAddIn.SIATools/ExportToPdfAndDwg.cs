@@ -4,7 +4,7 @@ using Eplan.EplApi.DataModel;
 using Eplan.EplApi.HEServices;
 using System;
 
-namespace WireMarking.ExportToPdfAndDwg
+namespace SIATools.ExportToPdfAndDwg
 {
     class ExportToPdfAndDwg : IEplAction
     {

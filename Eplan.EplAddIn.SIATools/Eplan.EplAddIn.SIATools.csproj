@@ -7,8 +7,8 @@
     <ProjectGuid>{E9EA6A33-77A6-442C-867C-1FA936C925C5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WireMarking</RootNamespace>
-    <AssemblyName>Eplan.EplAddIn.WireMarking</AssemblyName>
+    <RootNamespace>SIATools</RootNamespace>
+    <AssemblyName>Eplan.EplAddIn.SIATools</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -26,7 +26,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\..\..\..\Program Files\EPLAN\Platform\2.7.3\Bin\AddOns\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>

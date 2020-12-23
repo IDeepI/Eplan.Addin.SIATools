@@ -10,7 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
 
-namespace WireMarking.DoWireMarking
+namespace SIATools.DoWireMarking
 {
     public class DoWireMarking : IEplAction
     {
@@ -38,7 +38,7 @@ namespace WireMarking.DoWireMarking
             string ProjectName = CurrentProject.ProjectName;
             Debug.WriteLine(ProjectName);
             string xlsFileName = Path.GetDirectoryName(CurrentProject.ProjectFullName);            
-            xlsFileName = Path.Combine(xlsFileName, $"_{ DateTime.Now.Year }.{ DateTime.Now.Month }.{ DateTime.Now.Day }" + Settings.Default.outputFileName);
+            xlsFileName = Path.Combine(xlsFileName, $"{ DateTime.Now.Year }.{ DateTime.Now.Month }.{ DateTime.Now.Day }_" + Settings.Default.outputFileName);
             // Show ProgressBar
             Progress progress = new Progress("SimpleProgress");
             progress.SetAllowCancel(true);

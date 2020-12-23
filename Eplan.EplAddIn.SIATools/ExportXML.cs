@@ -3,7 +3,7 @@
 using System.Diagnostics;
 using Action = Eplan.EplApi.ApplicationFramework.Action;
 
-namespace WireMarking
+namespace SIATools
 {
 
     class ExportXML

@@ -1,7 +1,7 @@
 ﻿using Eplan.EplApi.ApplicationFramework;
 using Eplan.EplApi.Gui;
 
-namespace WireMarking
+namespace SIATools
 {
     public class AddInModule : IEplAddIn
     {
