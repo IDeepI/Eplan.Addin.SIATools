@@ -28,7 +28,7 @@ namespace WireMarking.ExportToPdfAndDwg
                 ChangeFontType(CurrentProject, "GOST Type AU");
                 progress.EndPart();
                 progress.BeginPart(25.0, "Export to DWG : ");
-                ExportToDwg();               
+                ExportToDwg();
             }
             catch (Exception ex)
             {
@@ -50,7 +50,7 @@ namespace WireMarking.ExportToPdfAndDwg
                 ChangeDrawMode(3);
             }
             catch (Exception ex)
-            {                
+            {
                 DoWireMarking.DoWireMarking.ErrorHandler("Export to PDF", ex);
                 return false;
             }
@@ -58,7 +58,7 @@ namespace WireMarking.ExportToPdfAndDwg
             {
                 progress.EndPart(true);
             }
-            
+
             return true;
         }
         /// <summary>
@@ -73,8 +73,8 @@ namespace WireMarking.ExportToPdfAndDwg
 
             string befor = projectSettings.GetExpandedStringSetting("TrDMProject.Wiring", 0);
 
-            projectSettings.SetNumericSetting("TrDMProject.Wiring", drawMode, 0);            
-                     
+            projectSettings.SetNumericSetting("TrDMProject.Wiring", drawMode, 0);
+
             //DoWireMarking.DoWireMarking.MassageHandler($"Befor { befor }\nAfter { drawMode }");
         }
 
@@ -89,7 +89,7 @@ namespace WireMarking.ExportToPdfAndDwg
             // Scheme of marking export
             string exportType = "PDFPROJECTSCHEME";
             string exportScheme = "SIA";
-            string exportFileName = $"d:\\Work\\PDF\\{ProjectName}.pdf";
+            string exportFileName = $"d:\\Work\\PDF\\{ ProjectName }_{ DateTime.Now.Year }.{ DateTime.Now.Month }.{ DateTime.Now.Day }.pdf";
             // Action
             string strAction = "export";
 
@@ -105,7 +105,7 @@ namespace WireMarking.ExportToPdfAndDwg
                 ctx.AddParameter("TYPE", exportType);
                 ctx.AddParameter("EXPORTSCHEME", exportScheme);
                 ctx.AddParameter("EXPORTFILE", exportFileName);
-               // ctx.AddParameter("USEPAGEFILTER", "1");
+                // ctx.AddParameter("USEPAGEFILTER", "1");
 
                 bool bRet = oAction.Execute(ctx);
                 if (bRet == false)
@@ -113,7 +113,7 @@ namespace WireMarking.ExportToPdfAndDwg
                     DoWireMarking.DoWireMarking.MassageHandler("Error in Action - ExportToPdf");
                 }
             }
-            
+
         }
         /// <summary>
         /// Export to dwg with filter "Для печати" and scheme "SIA DWG"
@@ -128,10 +128,7 @@ namespace WireMarking.ExportToPdfAndDwg
             string strAction = "export";
 
             // Export a project in DXF / DWG format
-
-            // export / TYPE:DXFPROJECT / PROJECTNAME:C:\Projects\EPLAN\ESS_Sample_Project.elk / DESTINATIONPATH:C:\temp
-
-               ActionManager oAMnr = new ActionManager();
+            ActionManager oAMnr = new ActionManager();
             Eplan.EplApi.ApplicationFramework.Action oAction = oAMnr.FindAction(strAction);
             if (oAction != null)
             {
@@ -139,7 +136,7 @@ namespace WireMarking.ExportToPdfAndDwg
                 ActionCallingContext ctx = new ActionCallingContext();
 
                 ctx.AddParameter("TYPE", exportType);
-               // ctx.AddParameter("EXPORTSCHEME", exportScheme);            
+                // ctx.AddParameter("EXPORTSCHEME", exportScheme);            
                 ctx.AddParameter("DESTINATIONPATH", exportPath);
                 //ctx.AddParameter("USEPAGEFILTER", "1");
 
@@ -147,14 +144,13 @@ namespace WireMarking.ExportToPdfAndDwg
                 if (bRet == false)
                 {
                     DoWireMarking.DoWireMarking.MassageHandler("Error in Action - ExportToDwg");
-                                       
-                    DoWireMarking.DoWireMarking.MassageHandler(ctx.ToString()); 
-                    DoWireMarking.DoWireMarking.MassageHandler(ctx.GetParameters().ToString()); 
-                    DoWireMarking.DoWireMarking.MassageHandler(ctx.GetStrings().ToString()); 
-                    
+
+                    DoWireMarking.DoWireMarking.MassageHandler(ctx.ToString());
+                    DoWireMarking.DoWireMarking.MassageHandler(ctx.GetParameters().ToString());
+                    DoWireMarking.DoWireMarking.MassageHandler(ctx.GetStrings().ToString());
 
                 }
-                
+
             }
         }
 
@@ -166,11 +162,11 @@ namespace WireMarking.ExportToPdfAndDwg
         private void ChangeFontType(Project currentProject, string font)
         {
             Eplan.EplApi.Base.Settings oSettings = new Eplan.EplApi.Base.Settings();
-          
+
             oSettings.SetStringSetting("COMPANY.GedViewer.Fonts", $"??_??@{font};", 0);
             oSettings.SetStringSetting("COMPANY.GedViewer.Fonts", $"??_??@{font};", 1);
 
-            string strTest0 = oSettings.GetStringSetting("COMPANY.GedViewer.Fonts", 0);            
+            string strTest0 = oSettings.GetStringSetting("COMPANY.GedViewer.Fonts", 0);
         }
 
         public void GetActionProperties(ref ActionProperties actionProperties)

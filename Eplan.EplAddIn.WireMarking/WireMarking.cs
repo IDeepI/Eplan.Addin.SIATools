@@ -37,8 +37,8 @@ namespace WireMarking.DoWireMarking
             Project CurrentProject = Set.GetCurrentProject(true);
             string ProjectName = CurrentProject.ProjectName;
             Debug.WriteLine(ProjectName);
-            string xlsFileName = Path.GetDirectoryName(CurrentProject.ProjectFullName);
-            xlsFileName = Path.Combine(xlsFileName, Settings.Default.outputFileName);
+            string xlsFileName = Path.GetDirectoryName(CurrentProject.ProjectFullName);            
+            xlsFileName = Path.Combine(xlsFileName, $"_{ DateTime.Now.Year }.{ DateTime.Now.Month }.{ DateTime.Now.Day }" + Settings.Default.outputFileName);
             // Show ProgressBar
             Progress progress = new Progress("SimpleProgress");
             progress.SetAllowCancel(true);
