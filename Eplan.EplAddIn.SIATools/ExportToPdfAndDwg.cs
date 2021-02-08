@@ -4,6 +4,7 @@ using Eplan.EplApi.DataModel;
 using Eplan.EplApi.HEServices;
 using System;
 
+
 namespace SIATools.ExportToPdfAndDwg
 {
     class ExportToPdfAndDwg : IEplAction
@@ -24,8 +25,8 @@ namespace SIATools.ExportToPdfAndDwg
             progress.BeginPart(25.0, "ChangeFontType to GOST Type AU : ");
             try
             {
-                ChangeDrawMode(2);
-                ChangeFontType(CurrentProject, "GOST Type AU");
+                ChangeDrawMode(CurrentProject, 2);
+                ChangeFontType("??_??@GOST Type AU;");
                 progress.EndPart();
                 progress.BeginPart(25.0, "Export to DWG : ");
                 ExportToDwg();
@@ -43,11 +44,11 @@ namespace SIATools.ExportToPdfAndDwg
             progress.Step(1);
             try
             {
-                ChangeFontType(CurrentProject, "GOST type A");
+                ChangeFontType("??_??@GOST type A;");
                 progress.EndPart();
                 progress.BeginPart(25.0, "Export to PDF : ");
-                ExportToPdf();
-                ChangeDrawMode(3);
+                ExportToPdf(ProjectName);
+                ChangeDrawMode(CurrentProject, 3);
             }
             catch (Exception ex)
             {
@@ -56,6 +57,7 @@ namespace SIATools.ExportToPdfAndDwg
             }
             finally
             {
+                //ChangeFontType(CurrentProject, "");
                 progress.EndPart(true);
             }
 
@@ -65,11 +67,9 @@ namespace SIATools.ExportToPdfAndDwg
         /// How to draw point of connection
         /// </summary>
         /// <param name="drawMode"> 3 - default. 2 - for printing</param>
-        private void ChangeDrawMode(int drawMode)
+        private void ChangeDrawMode(Project currentProject, int drawMode)
         {
-            Eplan.EplApi.DataModel.ProjectManager oProjectManager = new Eplan.EplApi.DataModel.ProjectManager();
-            Project oProject = oProjectManager.CurrentProject;
-            Eplan.EplApi.DataModel.ProjectSettings projectSettings = new Eplan.EplApi.DataModel.ProjectSettings(oProject);
+            Eplan.EplApi.DataModel.ProjectSettings projectSettings = new Eplan.EplApi.DataModel.ProjectSettings(currentProject);
 
             string befor = projectSettings.GetExpandedStringSetting("TrDMProject.Wiring", 0);
 
@@ -81,15 +81,12 @@ namespace SIATools.ExportToPdfAndDwg
         /// <summary>
         /// Export to pdf with filter "Для печати" and scheme "SIA"
         /// </summary>
-        private void ExportToPdf()
-        {
-            SelectionSet Set = new SelectionSet();
-            Project CurrentProject = Set.GetCurrentProject(true);
-            string ProjectName = CurrentProject.ProjectName;
+        private void ExportToPdf(string projectName)
+        {            
             // Scheme of marking export
             string exportType = "PDFPROJECTSCHEME";
             string exportScheme = "SIA";
-            string exportFileName = $"d:\\Work\\PDF\\{ ProjectName }_{ DateTime.Now.Year }.{ DateTime.Now.Month }.{ DateTime.Now.Day }.pdf";
+            string exportFileName = $"d:\\Work\\PDF\\{ projectName }_{ DateTime.Now.Year }.{ DateTime.Now.Month }.{ DateTime.Now.Day }.pdf";
             // Action
             string strAction = "export";
 
@@ -148,9 +145,7 @@ namespace SIATools.ExportToPdfAndDwg
                     DoWireMarking.DoWireMarking.MassageHandler(ctx.ToString());
                     DoWireMarking.DoWireMarking.MassageHandler(ctx.GetParameters().ToString());
                     DoWireMarking.DoWireMarking.MassageHandler(ctx.GetStrings().ToString());
-
                 }
-
             }
         }
 
@@ -159,15 +154,57 @@ namespace SIATools.ExportToPdfAndDwg
         /// </summary>
         /// <param name="font">Selected font type</param>
 
-        private void ChangeFontType(Project currentProject, string font)
+        private void ChangeFontType(string font)
         {
             Eplan.EplApi.Base.Settings oSettings = new Eplan.EplApi.Base.Settings();
 
-            oSettings.SetStringSetting("COMPANY.GedViewer.Fonts", $"??_??@{font};", 0);
-            oSettings.SetStringSetting("COMPANY.GedViewer.Fonts", $"??_??@{font};", 1);
+            oSettings.SetStringSetting("COMPANY.GedViewer.Fonts", font, 0);
+            oSettings.SetStringSetting("COMPANY.GedViewer.Fonts", font, 1);
 
-            string strTest0 = oSettings.GetStringSetting("COMPANY.GedViewer.Fonts", 0);
+            /*try
+            {
+                // Action
+                string strAction = "compress";
+
+                // Export a project in pdf format            
+
+                ActionManager oAMnr = new ActionManager();
+                Eplan.EplApi.ApplicationFramework.Action oAction = oAMnr.FindAction(strAction);
+                if (oAction != null)
+                {
+                    // Action properties
+                    ActionCallingContext ctx = new ActionCallingContext();
+
+                    bool bRet = oAction.Execute(ctx);
+                    if (bRet == false)
+                    {
+                        DoWireMarking.DoWireMarking.MassageHandler("Error in Action - gedRedraw");
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                DoWireMarking.DoWireMarking.MassageHandler("Exception in Action - gedRedraw");
+            }
+           */
+
+            //DoWireMarking.DoWireMarking.MassageHandler($"Font { oSettings.GetStringSetting("COMPANY.GedViewer.Fonts", 0) }");
+
+            //oSettings.Dispose();
         }
+
+        private void ChangeFontType(Project oProject, string font)
+        {
+            Eplan.EplApi.DataModel.ProjectSettings projectSettings = new Eplan.EplApi.DataModel.ProjectSettings(oProject);
+
+            projectSettings.SetStringSetting("GedViewer.Fonts", font, 0);
+            projectSettings.SetStringSetting("GedViewer.Fonts", font, 1);
+
+            //DoWireMarking.DoWireMarking.MassageHandler($"Font { projectSettings.GetStringSetting("GedViewer.Fonts", 0)}");
+
+            //projectSettings.Dispose();
+        }
+
 
         public void GetActionProperties(ref ActionProperties actionProperties)
         {

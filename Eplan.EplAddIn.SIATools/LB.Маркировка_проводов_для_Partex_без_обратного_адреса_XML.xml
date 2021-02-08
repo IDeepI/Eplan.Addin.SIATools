@@ -279,13 +279,13 @@
          <Val>8</Val>
          <Val>0</Val>
          <Val>5</Val>
-         <Val>9</Val>
+         <Val>10</Val>
          <Val>1</Val>
          <Val>11</Val>
          <Val>4</Val>
          <Val>12</Val>
          <Val>7</Val>
-         <Val>10</Val>
+         <Val>9</Val>
         </Setting>
         <LEV6 name="PropertyPack0">
          <Setting name="Length" type="int">
@@ -434,13 +434,13 @@
           <Val>0</Val>
          </Setting>
          <Setting name="RelationId" type="int">
-          <Val>20031</Val>
+          <Val>20000</Val>
          </Setting>
          <Setting name="RelationIndex" type="int">
           <Val>0</Val>
          </Setting>
          <Setting name="RelationName" type="string">
-          <Val>Устройство (источник)</Val>
+          <Val>Соединение</Val>
          </Setting>
          <Setting name="RelationSeparator" type="string">
           <Val/>
@@ -449,19 +449,19 @@
           <Val>1</Val>
          </Setting>
          <Setting name="SelectedPropertyId" type="int">
-          <Val>20901</Val>
+          <Val>31002</Val>
          </Setting>
          <Setting name="SelectedPropertyIndex" type="int">
-          <Val>1</Val>
+          <Val>0</Val>
          </Setting>
          <Setting name="Settings" type="string">
-          <Val>[20901&lt;...&gt;]</Val>
+          <Val>[31002&lt;...&gt;]</Val>
          </Setting>
          <Setting name="SumInLine" type="bool">
           <Val>0</Val>
          </Setting>
          <Setting name="Symbol" type="string">
-          <Val>P20901</Val>
+          <Val>P31002</Val>
          </Setting>
          <Setting name="Unit" type="int">
           <Val>0</Val>
